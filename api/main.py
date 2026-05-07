@@ -23,13 +23,17 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://synapse-ai-delta-coral.vercel.app",   # ← your vercel URL
+        "https://*.vercel.app",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ── Disk-based page store (survives restarts) ──────────────────────
-PAGES_DIR = "./generated_pages"
+PAGES_DIR = "/tmp/generated_pages"
 os.makedirs(PAGES_DIR, exist_ok=True)
 
 def _save_page(page_id: str, html: str) -> None:
