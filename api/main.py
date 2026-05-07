@@ -98,15 +98,26 @@ def _run_agent(req: AgentRequest, emit) -> MasterState:
 
     # Phase 3 — Builder
     # Phase 3 — Builder  — REPLACE this whole block
+    # Phase 3 — Builder
     if mode_val in (AgentMode.BUILDER, AgentMode.BOTH):
-        page_ids: dict[int, str] = {}  # ← track step_num → pid
+        page_ids: dict[int, str] = {}
+
+        # ── Pull ALL research findings to inject into builder ──────
+        research_text = "\n\n---\n\n".join(
+            f"TOPIC: {r.get('topic', '')}\n{r.get('findings', '')[:3000]}"
+            for r in state.get("research_reports", [])[:3]
+        )
 
         for step in bld_steps:
-            emit("start", "builder", "requirements_parser", f"Building: {step['task'][:60]}")
-            step_state = {
+            emit("start", "builder", "requirements_parser",
+                 f"Building: {step['task'][:60]}")
+
+            step_state: MasterState = {
                 **state,  # type: ignore
                 "current_builder_step": plan.index(step),
                 "build_description": state.get("user_query", step["task"]),
+                "build_research_ctx": research_text,  # ← KEY FIX
+                "research_topic": state.get("research_topic", step["task"]),
                 "fix_attempts": 0,
                 "build_errors": [],
             }
