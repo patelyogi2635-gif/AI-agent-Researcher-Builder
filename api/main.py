@@ -25,7 +25,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://synapse-ai-delta-coral.vercel.app/",   # ← your vercel URL
+        "https://synapse-ai-delta-coral.vercel.app",   # ← your vercel URL
         "https://*.vercel.app",
     ],
     allow_methods=["*"],
